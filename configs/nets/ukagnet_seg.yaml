@@ -1,0 +1,14 @@
+module: src.models.nets
+class_name: UKAGNet
+config:
+  input_channels: 3
+  num_classes: 1
+  unet_depth: 5
+  unet_layers: 2
+  groups: 1
+  width_scale: 1
+  use_bottleneck: false
+  mixer_type: conv
+  degree: 3
+  affine: true
+  dropout: 0.0

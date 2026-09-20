@@ -1,0 +1,9 @@
+module: src.trainers
+class_name: CommonLitTrainer
+config:
+  accelerator: gpu
+  devices:
+  - 0
+  callbacks:
+  - !include "../callbacks/modelcheckpoint.yaml"
+  max_epochs: 400

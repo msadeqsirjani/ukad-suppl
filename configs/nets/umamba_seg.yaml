@@ -1,0 +1,16 @@
+module: src.models.nets
+class_name: UMamba
+config:
+  in_ch: 3
+  out_ch: 1
+  # nnU-Net 2-D full-resolution plan for 256x256 BUSI/CVC inputs.
+  input_size: [256, 256]
+  filters: [32, 64, 128, 256, 512, 512]
+  strides: [1, 2, 2, 2, 2, 2]
+  blocks_per_stage: 2
+  decoder_blocks_per_stage: 2
+  variant: enc
+  d_state: 16
+  d_conv: 4
+  expand: 2
+  residual: false

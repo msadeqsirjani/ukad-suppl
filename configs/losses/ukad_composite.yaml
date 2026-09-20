@@ -1,0 +1,7 @@
+module: src.nn.losses
+class_name: CompositeLoss
+config:
+  losses:
+  - ["dice", 1.0, !include "./dsc.yaml"]
+  - ["bce", 0.5, !include "./bce.yaml"]
+  - ["boundary", 0.2, !include "./boundary.yaml"]

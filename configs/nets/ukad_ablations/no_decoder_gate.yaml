@@ -1,0 +1,26 @@
+module: src.models.nets
+class_name: UKAD
+config:
+  in_ch: 3
+  out_ch: 1
+  filters: [32, 64, 128, 256, 512]
+  groups: 8
+  max_radius: 3.0
+  degree_p: 3
+  degree_q: 2
+  context_dilations: [1, 3, 5]
+  residual: false
+  hard_gate: false
+  decoder_block: hybrid
+  attention_mask_norm: false
+  deep_supervision: true
+  aux_weights: [0.1, 0.2]
+  aux_target_mode: native
+  aux_anneal_start: 0.6
+  adaptive_context_levels: [3, 2]
+  adaptive_context_dilations: [1, 2, 4]
+  boundary_refinement: true
+  refinement_channels: 16
+  boundary_loss_weight: 0.05
+  boundary_kernel_size: 3
+  decoder_gate: false

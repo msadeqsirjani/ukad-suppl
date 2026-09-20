@@ -1,0 +1,11 @@
+module: lightning.pytorch.callbacks
+class_name: ModelCheckpoint
+config:
+  dirpath: ${WORKBENCH}/ckpts/${EXPERIMENT_NAME:-provenance}
+  filename: best_epoch_{epoch:03d}
+  monitor: val/iou
+  mode: max
+  save_top_k: 1
+  save_last: true
+  every_n_epochs: 1
+  auto_insert_metric_name: false

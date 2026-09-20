@@ -1,0 +1,6 @@
+module: torch.optim
+class_name: Adam
+config:
+  lr: 0.0001
+  weight_decay: 0.0001
+lr_scheduler: !include "../schedulers/ukan_cosine.yaml"

@@ -1,0 +1,3 @@
+module: src.nn.losses
+class_name: BoundaryLoss
+config: {}

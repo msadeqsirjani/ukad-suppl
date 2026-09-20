@@ -1,0 +1,6 @@
+# Optional GPU-only dependencies for the U-Mamba baseline.
+# Tested together with Python 3.12, torch==2.5.0+cu118 and CUDA 11.8.
+# Install after requirements.txt with --no-build-isolation so the extension
+# build can see the already-installed CUDA-enabled PyTorch package.
+causal-conv1d==1.4.0
+mamba-ssm==2.2.4

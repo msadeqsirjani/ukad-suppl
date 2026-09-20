@@ -1,0 +1,7 @@
+module: src.models.nets
+class_name: CGLKNet
+config:
+  in_ch: 3
+  out_ch: 1
+  backbone: maxvit_rmlp_tiny_rw_256
+  mlp_ratio: 4.0

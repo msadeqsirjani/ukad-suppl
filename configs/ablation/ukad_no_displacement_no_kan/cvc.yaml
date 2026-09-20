@@ -1,0 +1,13 @@
+trainer: !include "../../trainers/gpu.yaml"
+model:
+  module: src.models
+  class_name: UltrasoundSegmentationModel
+  config:
+    network: !include "../../nets/ukad_ablations/no_displacement_no_kan.yaml"
+    criterion: !include "../../losses/composite.yaml"
+    optimizer: !include "../../optimizers/adam_seg.yaml"
+data:
+  train_dataloaders:
+  - !include "../../data/cvc/train_dataloader.yaml"
+  val_dataloaders:
+  - !include "../../data/cvc/val_dataloader.yaml"

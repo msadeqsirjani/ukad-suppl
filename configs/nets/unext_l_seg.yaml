@@ -1,0 +1,7 @@
+module: src.models.nets
+class_name: UNeXt
+config:
+  in_ch: 3
+  out_ch: 1
+  # Official UNeXt-L channels.
+  filters: [32, 64, 128, 256, 512]

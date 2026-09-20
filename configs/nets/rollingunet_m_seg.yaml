@@ -1,0 +1,7 @@
+module: src.models.nets
+class_name: RollingUNet
+config:
+  in_ch: 3
+  out_ch: 1
+  # Official Rolling-Unet-M channels (base C = 32).
+  filters: [32, 64, 128, 256, 512]

@@ -1,0 +1,7 @@
+module: src.models.nets
+class_name: UNeXt
+config:
+  in_ch: 3
+  out_ch: 1
+  # Official UNeXt channels (1.47 M parameters for RGB segmentation).
+  filters: [16, 32, 128, 160, 256]

@@ -1,0 +1,5 @@
+module: torch.optim
+class_name: Adam
+config:
+  lr: 0.0001
+lr_scheduler: !include "../schedulers/paper_manual.yaml"

@@ -1,0 +1,17 @@
+module: src.models.nets
+class_name: UMamba
+config:
+  in_ch: 3
+  out_ch: 1
+  # GlaS is trained at 512x512. Channel-token Mamba's model dimension is
+  # spatial-plan dependent, so it must not reuse the 256x256 plan.
+  input_size: [512, 512]
+  filters: [32, 64, 128, 256, 512, 512]
+  strides: [1, 2, 2, 2, 2, 2]
+  blocks_per_stage: 2
+  decoder_blocks_per_stage: 2
+  variant: enc
+  d_state: 16
+  d_conv: 4
+  expand: 2
+  residual: false

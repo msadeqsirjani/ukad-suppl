@@ -1,0 +1,8 @@
+module: src.data
+class_name: glas
+config:
+  dataset: !include "./datasets/val.yaml"
+  split: val
+  batch_size: 8
+  shuffle: false
+  pin_memory: true

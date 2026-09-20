@@ -1,0 +1,8 @@
+module: src.models.nets
+class_name: AdaKAN
+config:
+  in_ch: 3
+  out_ch: 1
+  embed_dims: [256, 320, 512]
+  num_heads: 8
+  bernstein_order: 3
