@@ -57,6 +57,18 @@ This reloads the best-validation-IoU checkpoint, runs the held-out validation sp
 MedPy's IoU, Dice, HD, HD95, recall, precision, and specificity — the same pipeline that produced
 every number in the paper's tables (see Appendix A.2.2 for exact metric definitions).
 
+## Reproduction check
+
+```bash
+python scripts/eval/check_reproduction.py outputs/performance/<model>_<dataset>.json
+python scripts/eval/summarize_reproduction.py
+```
+
+The first script reloads every checkpoint listed in a result JSON, re-runs the validation split,
+and writes the stored value, the recomputed value, and their difference for each metric. It also
+counts batches on which MedPy's HD or HD95 would raise. The second script collects the run logs
+into one CSV.
+
 ## Layout
 
 - `src/models/nets/baselines/ukad.py` — the proposed UKAD architecture.
