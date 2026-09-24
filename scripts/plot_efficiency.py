@@ -57,6 +57,7 @@ FAMILY_PICK = {
 }
 
 FAMILY_NAME = {
+    "unetpp": "UNet++",
     "unext": "UNeXt",
     "rollingunet": "Rolling-UNet",
     "ukad": "UKAD",
