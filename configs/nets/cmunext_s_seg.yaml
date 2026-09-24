@@ -1,0 +1,8 @@
+module: src.models.nets
+class_name: CMUNeXt
+config:
+  in_ch: 3
+  out_ch: 1
+  dims: [8, 16, 32, 64, 128]
+  depths: [1, 1, 1, 1, 1]
+  kernels: [3, 3, 7, 7, 9]

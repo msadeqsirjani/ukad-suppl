@@ -13,6 +13,10 @@ from .baselines import (
     UMamba,
     AdaKAN,
     CGLKNet,
+    NNUNetResEnc,
+    MedNeXt,
+    LKMUNet,
+    CMUNeXt,
 )
 
 from src.utils.torch_utils import torch_load
@@ -36,6 +40,10 @@ def get(identifier, checkpoint=None, **kwargs):
             "UMamba": UMamba,
             "AdaKAN": AdaKAN,
             "CGLKNet": CGLKNet,
+            "NNUNetResEnc": NNUNetResEnc,
+            "MedNeXt": MedNeXt,
+            "LKMUNet": LKMUNet,
+            "CMUNeXt": CMUNeXt,
         },
         **kwargs,
     )

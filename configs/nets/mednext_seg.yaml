@@ -1,0 +1,8 @@
+module: src.models.nets
+class_name: MedNeXt
+config:
+  in_ch: 3
+  out_ch: 1
+  size: B
+  n_channels: 32
+  kernel_size: 3

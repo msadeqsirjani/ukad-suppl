@@ -1,0 +1,15 @@
+module: src.models.nets
+class_name: NNUNetResEnc
+config:
+  in_ch: 3
+  out_ch: 1
+  # nnUNetPlannerResEncM 2-D plan for a 512x512 median shape (unit spacing):
+  # patch 512x512 still fits the 8 GB VRAM reference (estimate 129.2M < 135M),
+  # min feature-map edge 4 gives 7 poolings (8 stages), features 32*2^i capped
+  # at 512, ResEnc-M encoder blocks (1,3,4,6,6,6,6,6), one conv per decoder
+  # stage, kernel 3 everywhere.
+  filters: [32, 64, 128, 256, 512, 512, 512, 512]
+  strides: [1, 2, 2, 2, 2, 2, 2, 2]
+  blocks_per_stage: [1, 3, 4, 6, 6, 6, 6, 6]
+  decoder_blocks_per_stage: [1, 1, 1, 1, 1, 1, 1]
+  kernel_size: 3

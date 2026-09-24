@@ -10,6 +10,10 @@ from .ukad import UKAD
 from .umamba import UMamba
 from .adakan import AdaKAN
 from .cglknet import CGLKNet
+from .nnunet_resenc import NNUNetResEnc
+from .mednext import MedNeXt
+from .lkmunet import LKMUNet
+from .cmunext import CMUNeXt
 
 __all__ = [
     "AttentionUNet",
@@ -24,4 +28,8 @@ __all__ = [
     "UMamba",
     "AdaKAN",
     "CGLKNet",
+    "NNUNetResEnc",
+    "MedNeXt",
+    "LKMUNet",
+    "CMUNeXt",
 ]
