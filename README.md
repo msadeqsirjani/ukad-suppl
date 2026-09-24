@@ -1,7 +1,7 @@
 # Supplementary Code — UKAD: Deformable Kolmogorov-Arnold Networks for Medical Image Segmentation
 
 This package reproduces every experiment reported in the paper: UKAD (S/B/L), all twelve retrained
-baselines, and the ablation arms in Appendix A.4. It excludes raw datasets, trained checkpoints, and
+baselines, and the ablation arms in Appendix D. It excludes raw datasets, trained checkpoints, and
 logs — only the code and configuration needed to rerun the pipeline from scratch.
 
 ## Requirements
@@ -18,7 +18,7 @@ Two environment variables must be set before running anything:
 
 - `WORKBENCH` — a writable directory for checkpoints, logs, and split manifests.
 - `DATASETS` — the directory holding the raw BUSI, CVC-ClinicDB, GlaS, and ISIC 2018 data (see the
-  paper's Appendix A.2.3 for dataset sources and the expected split protocol).
+  paper's Appendix A.3 for dataset sources and the expected split protocol).
 
 ```bash
 export WORKBENCH=/path/to/workbench
@@ -55,7 +55,20 @@ bash scripts/eval/eval_busi.sh ukad_b
 
 This reloads the best-validation-IoU checkpoint, runs the held-out validation split, and reports
 MedPy's IoU, Dice, HD, HD95, recall, precision, and specificity — the same pipeline that produced
-every number in the paper's tables (see Appendix A.2.2 for exact metric definitions).
+every number in the paper's tables (see Appendix A.2 for exact metric definitions).
+
+## Significance tests (Appendix C)
+
+```bash
+python scripts/eval/paired_runs.py
+python scripts/eval/per_image_iou.py --models variants/ukad_l variants/ukad_b adakan rollingunet_l ukan
+python scripts/eval/paired_bootstrap.py
+```
+
+`paired_runs.py` runs a paired Wilcoxon test over the 12 dataset-split pairs with Holm correction.
+`per_image_iou.py` reloads the stored checkpoints and writes per-image IoU on each validation split.
+`paired_bootstrap.py` pairs those values by image and reports a bootstrap interval and p-value,
+resampling within each dataset-split stratum.
 
 ## Reproduction check
 
@@ -75,8 +88,8 @@ into one CSV.
 - `src/models/nets/` — every baseline architecture, registered in `src/models/nets/__init__.py`.
 - `src/models/base_model.py`, `src/models/_seg_metrics.py` — the Lightning task wrapper and metrics.
 - `configs/variants/` — UKAD-S/B/L configs, one per dataset.
-- `configs/baselines/` — one config directory per baseline model.
-- `configs/ablation/` — the eleven ablation arms of Appendix A.4.
+- `configs/baselines/` — one config directory per baseline model, including nnU-Net ResEnc-M, MedNeXt, LKM-UNet, and CMUNeXt configs for additional comparisons.
+- `configs/ablation/` — the fourteen ablation arms of Appendix D.
 - `scripts/train/`, `scripts/eval/`, `scripts/variants/` — driver scripts.
 - `train.py` — the single entry point every experiment in the paper runs through.
 
