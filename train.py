@@ -1,5 +1,3 @@
-# ruff: noqa: E402  # Configure OpenCV before importing the training stack.
-
 import cv2
 
 cv2.setNumThreads(0)

@@ -1,5 +1,6 @@
 import argparse
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -7,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from src.utils.protocol import SEGMENTATION_DATASETS  # noqa: E402
+from src.utils.protocol import SEGMENTATION_DATASETS
 
 PERF = ROOT / "outputs" / "performance"
 
@@ -30,7 +31,21 @@ def image_iou(logits, target):
     inter = (pred & true).flatten(1).sum(1).float()
     union = (pred | true).flatten(1).sum(1).float()
     iou = torch.where(union > 0, inter / union.clamp(min=1), torch.ones_like(union))
-    return iou.tolist(), true.flatten(1).sum(1).tolist()
+    return iou.tolist(), true.flatten(1).sum(1).tolist(), image_hd95(pred.cpu().numpy(), true.cpu().numpy())
+
+
+def image_hd95(pred, true):
+    from medpy.metric.binary import hd95
+
+    values = []
+    for p, t in zip(pred, true):
+        if p.any() and t.any():
+            values.append(float(hd95(p, t)))
+        elif p.any() or t.any():
+            values.append(float(math.hypot(*p.shape[-2:])))
+        else:
+            values.append(0.0)
+    return values
 
 
 def evaluate(model_name, dataset, device):
@@ -48,13 +63,14 @@ def evaluate(model_name, dataset, device):
         model.load_state_dict(payload.get("state_dict", payload), strict=True)
         model.eval()
         loader = data.get(load_config(record["evaluation"]["config"]))
-        ious, pixels = [], []
+        ious, pixels, hd95s = [], [], []
         with torch.inference_mode():
             for batch in loader:
-                iou, count = image_iou(model(batch["image"].to(device)), batch["mask"].to(device))
+                iou, count, hd = image_iou(model(batch["image"].to(device)), batch["mask"].to(device))
                 ious += iou
                 pixels += count
-        runs[run_key] = {"iou": ious, "mask_pixels": pixels}
+                hd95s += hd
+        runs[run_key] = {"iou": ious, "mask_pixels": pixels, "hd95": hd95s}
     return {"model": model_name, "dataset": dataset, "checkpoints": record["checkpoints"], "runs": runs}
 
 
@@ -69,7 +85,8 @@ def main(args):
             result = evaluate(model_name, dataset, args.device)
             out.write_text(json.dumps(result, indent=2) + "\n")
             means = {k: round(100 * sum(v["iou"]) / len(v["iou"]), 2) for k, v in result["runs"].items()}
-            print(f"wrote {out} {means}")
+            hd95 = {k: round(sum(v["hd95"]) / len(v["hd95"]), 2) for k, v in result["runs"].items()}
+            print(f"wrote {out} iou={means} hd95={hd95}")
 
 
 if __name__ == "__main__":

@@ -38,6 +38,8 @@ LABELS = {
     "unetpp": (14, 15, "left", True),
     "unet": (0, -13, "center", True),
     "attunet": (13, 3, "left", True),
+    "mednext": (-16, -26, "right", True),
+    "nnunet_resenc": (-6, -31, "center", False),
 }
 
 VARIANT_FAMILY = {
@@ -66,7 +68,7 @@ FAMILY_NAME = {
 Y_TICKS = (75, 76, 78, 80, 82, 83)
 
 SIZE_REFS_M = (5, 15, 30)
-FONT = style.SIZE
+FONT = style.SIZE + 1.5
 LABEL_SCALE = 1.15
 TEXT_INK = style.INK
 

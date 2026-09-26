@@ -1,5 +1,3 @@
-"""Faithful, dependency-free port of the official UNeXt model."""
-
 import math
 
 import torch

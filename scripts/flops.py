@@ -1,10 +1,3 @@
-"""Measure params, FLOPs, MACs, and model size for a network config.
-
-Usage:
-    python scripts/flops.py --config configs/baselines/ufunkan/busi.yaml
-    python scripts/flops.py --config configs/nets/ufunkan_seg_512.yaml --input_shape 1 3 512 512
-"""
-
 import sys
 import os
 

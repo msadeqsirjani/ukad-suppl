@@ -3,7 +3,5 @@ class_name: UNet
 config:
   in_ch: 3
   out_ch: 1
-  # milesial/Pytorch-UNet default (31.04 M): U-FunKAN's 34.53 M is a different
-  # implementation and cannot be obtained from the linked upstream model.
   filters: [64, 128, 256, 512, 1024]
   bilinear: false

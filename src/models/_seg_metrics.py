@@ -30,10 +30,4 @@ def seg_indicators(logits, target, threshold=0.5):
         "specificity": specificity,
         "precision": precision,
     }
-    values = {}
-    for name, function in metrics.items():
-        try:
-            values[name] = float(function(pred, tgt))
-        except Exception:
-            values[name] = 0.0
-    return values
+    return {name: float(function(pred, tgt)) for name, function in metrics.items()}

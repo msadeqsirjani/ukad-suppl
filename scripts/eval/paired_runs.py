@@ -22,6 +22,8 @@ BASELINES = (
     "ufunkan",
     "ukanplus",
     "adakan",
+    "mednext",
+    "nnunet_resenc",
 )
 
 

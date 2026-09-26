@@ -1,5 +1,3 @@
-"""Attention U-Net matching the standard 34.88 M implementation."""
-
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -21,7 +19,6 @@ class UpConv(nn.Module):
     def forward(self, x, size=None):
         if size is None:
             return self.conv(x)
-        # Keep the official operation order while supporting odd-sized inputs.
         x = F.interpolate(x, size=size, mode="nearest")
         return self.conv[1:](x)
 

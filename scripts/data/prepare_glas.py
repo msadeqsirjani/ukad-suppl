@@ -1,37 +1,3 @@
-"""Download GlaS and emit the three U-KAN paper-comparison splits.
-
-Source: Kaggle mirror of the MICCAI'2015 GlaS / Warwick QU dataset
-        https://www.kaggle.com/datasets/sani84/glasmiccai2015-gland-segmentation
-        (the original warwick.ac.uk download now requires login)
-Requires: pip install kaggle  +  ~/.kaggle/kaggle.json
-
-Output structure (BMP converted to PNG):
-    ${DATASETS}/glas/
-        train_1.png
-        train_1_anno.png
-        testA_1.png
-        testA_1_anno.png
-        ...
-    ${WORKBENCH}/data_lists/glas/split_{2981,6142,1187}/
-        train.csv, val.csv, protocol.json
-
-U-FunKAN's legacy baseline rows were sourced from U-KAN. U-KAN combines the
-official training and test cases, then applies
-``sklearn.model_selection.train_test_split`` independently with split seeds
-2981, 6142, and 1187. The split is unstratified and image-level; the held-out
-20 percent is both validation and reported evaluation, with no independent
-test partition.
-
-Matches config:
-    root: ${DATASETS}/glas
-    load_params: [{dtype: uint8}, {normalize: 255., dtype: float32}]
-
-Usage:
-    python scripts/data/prepare_glas.py \\
-        --datasets /path/to/datasets \\
-        --workbench /path/to/workbench
-"""
-
 import argparse
 import json
 import shutil
@@ -132,7 +98,6 @@ def write_split(lists_dir: Path, split_seed: int, splits: dict, metadata: dict):
 
 
 def build_paper_split(all_pairs, split_seed: int):
-    """Reproduce U-KAN's unstratified all-image sklearn split."""
     train, val = train_test_split(
         list(all_pairs),
         test_size=0.2,

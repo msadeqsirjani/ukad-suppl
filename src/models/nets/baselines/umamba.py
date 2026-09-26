@@ -1,16 +1,3 @@
-"""Plan-compatible 2-D adaptation of the official U-Mamba encoder model.
-
-The reference implementation lives in ``nnunetv2/nets/UMambaEnc_2d.py`` in
-bowang-lab/U-Mamba.  This module keeps the small constructor used by this
-project, but mirrors the parts that define U-Mamba-Enc: a residual nnU-Net
-stem/encoder/decoder, Mamba on alternating encoder stages (including the last
-stage), and the reference patch-token/channel-token switch.
-
-It intentionally does not depend on nnU-Net's planning packages.  Their plan
-values are exposed directly as ``filters``, ``strides``, and block counts.
-``mamba_ssm`` is still required, exactly as it is upstream.
-"""
-
 from __future__ import annotations
 
 import math
@@ -32,12 +19,10 @@ def _as_pair(value: int | Sequence[int]) -> tuple[int, int]:
 def _conv_output_size(
     size: tuple[int, int], stride: tuple[int, int]
 ) -> tuple[int, int]:
-    # All encoder convolutions use kernel=3, padding=1 and dilation=1.
     return tuple((axis - 1) // step + 1 for axis, step in zip(size, stride))
 
 
 class MambaLayer(nn.Module):
-    """Mamba over spatial patches or channels, following upstream exactly."""
 
     def __init__(
         self,
@@ -90,9 +75,6 @@ class MambaLayer(nn.Module):
         return sequence.reshape(batch, channels, *spatial)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # The official implementation disables autocast around Mamba and casts
-        # fp16 input to fp32.  The device type must be selected at runtime so
-        # CPU smoke tests remain supported.
         if x.dtype == torch.float16:
             x = x.float()
         device_type = x.device.type if x.device.type in ("cpu", "cuda") else "cpu"
@@ -103,7 +85,6 @@ class MambaLayer(nn.Module):
 
 
 class BasicResBlock(nn.Module):
-    """Two-convolution residual block used by U-Mamba's encoder/decoder."""
 
     def __init__(
         self,
@@ -126,7 +107,6 @@ class BasicResBlock(nn.Module):
         self.norm2 = nn.InstanceNorm2d(out_ch, eps=1e-5, affine=True)
         self.act2 = nn.LeakyReLU(inplace=True)
         if projection or in_ch != out_ch or stride != (1, 1):
-            # Upstream BasicResBlock deliberately has no norm on this path.
             self.shortcut = nn.Conv2d(
                 in_ch, out_ch, kernel_size=1, stride=stride, bias=conv_bias
             )
@@ -216,8 +196,6 @@ class ResidualMambaEncoder(nn.Module):
                 )
             )
 
-            # Same parity expression as upstream: alternating stages and the
-            # final encoder stage always receives Mamba.
             has_mamba = bool(stage_index % 2) ^ bool(n_stages % 2)
             if has_mamba:
                 pixels = math.prod(map_size)
@@ -291,12 +269,6 @@ class DecoderStage(nn.Module):
 
 
 class UMamba(nn.Module):
-    """Faithful local constructor for the 2-D U-Mamba-Enc architecture.
-
-    ``variant='enc'`` is the supported reference model.  ``variant='bot'`` is
-    rejected instead of silently constructing a different network.  nnU-Net
-    plans commonly use six stages with features ``[32,64,128,256,512,512]``.
-    """
 
     def __init__(
         self,
@@ -347,9 +319,6 @@ class UMamba(nn.Module):
         if len(decoder_blocks) != n_stages - 1:
             raise ValueError("decoder_blocks_per_stage must have n_stages - 1 entries")
 
-        # U-Mamba-Enc reduces convolutional depth in the upper half because
-        # Mamba supplies the global modeling there.  This mutation is present
-        # in the official constructor.
         for stage in range(math.ceil(n_stages / 2), n_stages):
             encoder_blocks[stage] = 1
         decoder_start = math.ceil((n_stages - 1) / 2 + 0.5)
@@ -374,9 +343,6 @@ class UMamba(nn.Module):
 
         decoder = []
         for decoder_index, stage_index in enumerate(range(n_stages - 2, -1, -1)):
-            # The final/full-resolution decoder stage has no skip in the
-            # reference implementation because the encoder stem already acts
-            # at that resolution.
             has_skip = decoder_index < n_stages - 2
             decoder.append(
                 DecoderStage(
@@ -388,8 +354,6 @@ class UMamba(nn.Module):
                 )
             )
         self.decoder = nn.ModuleList(decoder)
-        # Upstream allocates a head for every decoder level (for optional deep
-        # supervision), even when only the last head is returned.
         self.seg_heads = nn.ModuleList(
             nn.Conv2d(filters[index], out_ch, kernel_size=1)
             for index in range(n_stages - 2, -1, -1)
@@ -413,7 +377,6 @@ class UMamba(nn.Module):
             x = stage(x, skip)
         x = self.seg_heads[-1](x)
         if x.shape[-2:] != model_input.shape[-2:]:
-            # Odd plan sizes can lose one pixel at the no-skip final decoder.
             x = F.interpolate(x, size=model_input.shape[-2:], mode="nearest")
         if self.residual:
             x = x + model_input

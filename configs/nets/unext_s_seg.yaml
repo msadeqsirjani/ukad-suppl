@@ -3,5 +3,4 @@ class_name: UNeXt
 config:
   in_ch: 3
   out_ch: 1
-  # UNeXt-S widened at C4 to match the 0.32 M parameter count reported in the paper.
   filters: [8, 16, 32, 84, 128]

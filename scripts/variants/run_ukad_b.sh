@@ -27,36 +27,26 @@ case "$MODE" in
         ;;
     pilot)
         read -r -a GPUS <<< "${RUN_GPUS:-0 1 2 3}"
-        # Hard BUSI split plus representative preservation tests for GLaS,
-        # CVC and ISIC provide a go/no-go test before twelve full runs.
         TASK_DATASETS=(busi glas cvc isic)
         TASK_SEEDS=(6142 2981 1187 1187)
         ;;
     confirm)
         read -r -a GPUS <<< "${RUN_GPUS:-0 1 2 3}"
-        # Complete BUSI and GLaS after the pilot without spending runs on the
-        # remaining CVC and ISIC splits until the target-dataset gains hold.
         TASK_DATASETS=(busi busi glas glas)
         TASK_SEEDS=(2981 1187 6142 1187)
         ;;
     remaining)
         read -r -a GPUS <<< "${RUN_GPUS:-0 1}"
-        # Complete CVC and ISIC after their seed-1187 pilot runs. Tasks are
-        # assigned round-robin and all start immediately, even on shared GPUs.
         TASK_DATASETS=(cvc cvc isic isic)
         TASK_SEEDS=(2981 6142 2981 6142)
         ;;
     isic)
         read -r -a GPUS <<< "${RUN_GPUS:-3 1 2}"
-        # Submit all ISIC splits. Completed or currently locked splits are
-        # skipped, while interrupted splits resume from last.ckpt.
         TASK_DATASETS=(isic isic isic)
         TASK_SEEDS=(1187 2981 6142)
         ;;
     complete)
         read -r -a GPUS <<< "${RUN_GPUS:-0 1 2 3 4 5 6 7}"
-        # Launch every seed not covered by the four-run pilot. With eight
-        # GPUs, all confirmation runs start concurrently.
         TASK_DATASETS=(busi busi glas glas cvc cvc isic isic)
         TASK_SEEDS=(2981 1187 6142 1187 2981 6142 2981 6142)
         ;;

@@ -1,5 +1,3 @@
-"""Plot paired IoU and HD95 ablation effects, separately for each dataset."""
-
 import json
 from pathlib import Path
 import sys
@@ -20,11 +18,11 @@ DEFAULT = "variants/ukad_b"
 DATASETS = (("busi", "BUSI"), ("cvc", "CVC"), ("glas", "GlaS"), ("isic", "ISIC"))
 COMPONENTS = (
     ("Displacement", "ukad_no_displacement", style.BLUE),
-    ("Group-Rational Form", "ukad_no_kan", style.SAND),
-    ("Displacement + Group-Rational Form", "ukad_no_displacement_no_kan", style.UKAD),
+    ("Rational Activation", "ukad_no_kan", style.SAND),
+    ("Displacement + Rational", "ukad_no_displacement_no_kan", style.UKAD),
     ("Context Branch", "ukad_no_context", style.TEAL),
     ("Hybrid Decoder", "ukad_kan_decoder", style.LILAC),
-    ("Adaptive Context", "ukad_no_adaptive_context", style.ROSE),
+    ("Adaptive-Context Mixer", "ukad_no_adaptive_context", style.ROSE),
 )
 
 
@@ -34,7 +32,6 @@ def runs(name, dataset, metric):
 
 
 def paired_effect(arm, dataset, metric, scale):
-    """Positive values favor retaining the component, split by split."""
     return scale * (runs(DEFAULT, dataset, metric) - runs(f"ablations/{arm}", dataset, metric))
 
 
@@ -52,8 +49,6 @@ def draw_panel(ax, dataset, title, x_limits, y_limits):
     x_min, x_max, _ = x_limits
     y_min, y_max, _ = y_limits
     zero_y = (0.0 - y_min) / (y_max - y_min)
-    # The two shaded quadrants give the bivariate effect an immediate reading:
-    # upper-right improves both measures, while lower-left worsens both.
     ax.axvspan(0.0, x_max, ymin=zero_y, ymax=1.0, color="#EDF6EE", zorder=-2)
     ax.axvspan(x_min, 0.0, ymin=0.0, ymax=zero_y, color="#FBEFF0", zorder=-2)
     ax.axvline(0.0, color=style.INK, linewidth=0.75, zorder=1)
@@ -117,9 +112,9 @@ def main():
         draw_panel(ax, dataset, title, x_limits, y_limits)
 
     for ax in axes[1, :]:
-        ax.set_xlabel(r"$\Delta$IoU (pp; right is better)", fontsize=style.SIZE - 4.0, labelpad=2)
+        ax.set_xlabel(r"$\Delta$IoU (pp, right is better)", fontsize=style.SIZE - 4.0, labelpad=2)
     for ax in axes[:, 0]:
-        ax.set_ylabel(r"$\Delta$HD95 (px; up is better)", fontsize=style.SIZE - 4.0, labelpad=2)
+        ax.set_ylabel(r"$\Delta$HD95 (px, up is better)", fontsize=style.SIZE - 4.0, labelpad=2)
 
     handles, labels = axes[0, 0].get_legend_handles_labels()
     style.place_legend(fig, handles, labels, fontsize=style.SIZE - 5.3, anchor=(0.5, 0.985), loc="upper center", ncol=2)

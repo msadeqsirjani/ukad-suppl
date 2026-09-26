@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from src.utils.protocol import (  # noqa: E402
+from src.utils.protocol import (
     SEGMENTATION_DATASETS,
     SEGMENTATION_SPLIT_SEEDS,
     TRAINING_SEED,

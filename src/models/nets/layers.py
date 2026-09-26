@@ -47,20 +47,6 @@ def _make_layer(layer, *args, **kwargs):
 
 
 class ResBlock(nn.Module):
-    """Pre-activated residual block.
-
-    Pre-activation ResNet is a variant of the original Residual Network (ResNet) architecture
-    that modifies the order of operations within the residual blocks to improve training and performance.
-    Introduced by Kaiming He et al., this architecture aims to address the issues related to gradient flow
-    in deep networks by changing the placement of activation functions and batch normalization layers.
-
-    Args:
-        in_ch: Input feature dimension.
-        out_ch: Output feature dimension. If not specified, in_ch is used.
-        hid_ch: Hidden feature dimension. If not specified, min(in_ch, out_ch) is used.
-        bn: If True, batch normalization is applied.
-        layer: Layer to be used (deserialized by internal def _make_layer(...)).
-    """
 
     def __init__(
         self, in_ch, out_ch=None, hid_ch=None, bn=False, layer="conv3x3", **kwargs
@@ -102,17 +88,6 @@ class ResBlock(nn.Module):
 
 
 class ConvBlock(nn.Module):
-    """Pre-activated convolutional block.
-
-    The block activates inputs, applies convolution and adds skip connection, if specified.
-
-    Args:
-        in_ch: Input feature dimension.
-        out_ch: Output feature dimension. If not specified, in_ch is used.
-        bn: If True, batch normalization is applied.
-        layer: Layer to be used (deserialized by internal def _make_layer(...)).
-        activation: Activation to be used (deserialized by internal def activate(...)).
-    """
 
     def __init__(
         self, in_ch, out_ch=None, bn=False, layer="conv3x3", activation="relu", **kwargs
@@ -135,14 +110,6 @@ class ConvBlock(nn.Module):
 
 
 class ResidualEncoderBlock(nn.Module):
-    """Residual encoder block.
-
-    The block generates features by ResBlock and encodes (projects) features to the output feature dimension via conv3x3 with stride 2.
-
-    Args:
-        in_ch: Input feature dimension.
-        out_ch: Output feature dimension. If not specified, in_ch is used.
-    """
 
     def __init__(self, in_ch, out_ch=None, **kwargs):
         super(ResidualEncoderBlock, self).__init__()
@@ -160,15 +127,6 @@ class ResidualEncoderBlock(nn.Module):
 
 
 class ResidualDecoderBlock(nn.Module):
-    """Residual decoder block.
-
-    The block decodes (up-projects) features to the output feature dimension via bilinear upsample and conv3x3,
-    applies skip connection, if specified, and generates features by ResBlock.
-
-    Args:
-        in_ch: Input feature dimension.
-        out_ch: Output feature dimension. If not specified, in_ch is used.
-    """
 
     def __init__(self, in_ch, out_ch=None, **kwargs):
         super(ResidualDecoderBlock, self).__init__()

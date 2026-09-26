@@ -1,11 +1,3 @@
-"""U-Net ported from milesial/Pytorch-UNet at commit 21d7850.
-
-The official transposed-convolution model has 31,037,633 parameters for an
-RGB-to-binary network.  This intentionally follows the repository linked for
-the reproduction instead of retrofitting the unrelated 34.53 M fingerprint
-quoted by U-FunKAN Table 3.
-"""
-
 import torch
 from torch import nn
 from torch.nn import functional as F

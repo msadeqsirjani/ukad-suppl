@@ -3,5 +3,4 @@ class_name: RollingUNet
 config:
   in_ch: 3
   out_ch: 1
-  # Official Rolling-Unet-L channels (base C = 64).
   filters: [64, 128, 256, 512, 1024]

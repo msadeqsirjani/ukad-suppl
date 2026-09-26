@@ -37,8 +37,6 @@ def series(models, dataset):
 
 def draw(out_path):
     style.apply()
-    # A compact 2x2 layout makes this panel work as a single-column figure
-    # when it is paired with the ablation panel in the paper.
     fig, axes = plt.subplots(2, 2, figsize=(3.75, 3.75))
     axes = axes.ravel()
     for j, (ax, dataset) in enumerate(zip(axes, DATASETS)):
@@ -62,10 +60,7 @@ def draw(out_path):
         style.clean(ax)
         ax.set_ylabel("IoU (%)", fontsize=style.SIZE - 3.0)
     handles, labels = axes[0].get_legend_handles_labels()
-    # Reserve one identical legend row above each of the paired figures.
     style.place_legend(fig, handles, labels, fontsize=style.SIZE - 5.0, anchor=(0.5, 0.975), loc="upper center", ncol=3)
-    # This fixed grid is shared with the ablation figure so their subplot
-    # rectangles remain identical even though only this figure shows x labels.
     fig.subplots_adjust(left=0.145, right=0.985, bottom=0.145, top=0.855, wspace=0.42, hspace=0.55)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=300, facecolor="white")

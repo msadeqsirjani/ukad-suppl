@@ -3,5 +3,4 @@ class_name: AttentionUNet
 config:
   in_ch: 3
   out_ch: 1
-  # Standard Attention U-Net reported as 34.88 M in U-FunKAN.
   filters: [64, 128, 256, 512, 1024]

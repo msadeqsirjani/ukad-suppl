@@ -23,8 +23,8 @@ DISPLAY_TITLE = {
     "rollingunet_l": "Rolling-UNet",
     "ukad_l": "UKAD",
 }
-MAIN_MODELS = ("attunet", "unetpp", "rollingunet_l", "ukan", "adakan", "ukad_l")
-MAIN_INDICES = (0, 2, 0, 0)
+MAIN_MODELS = ("rollingunet_l", "ukan", "adakan", "ukad_l")
+MAIN_INDICES = (6, 2, 0, 0)
 
 
 def columns(names):

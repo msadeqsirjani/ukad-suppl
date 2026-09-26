@@ -1,15 +1,3 @@
-"""Benchmark inference latency and GPU memory for all paper models.
-
-The benchmark measures the model forward pass only: it excludes data loading,
-preprocessing, checkpoint I/O, and post-processing.  Models run in eval mode
-with inference mode and FP32 inputs.  The 256 and 512 runs load the matching
-BUSI and ISIC configuration, respectively, so resolution-specific models use
-their paper configuration.
-
-Example:
-    python scripts/benchmark_inference.py --device cuda --output outputs/performance/inference.json
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -27,8 +15,8 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from src import models  # noqa: E402
-from src.utils.serialization_utils import load_config  # noqa: E402
+from src import models
+from src.utils.serialization_utils import load_config
 
 
 MODEL_LABELS = {
@@ -48,6 +36,8 @@ MODEL_LABELS = {
     "cglknet": "CGLKNet",
     "ukanplus": "UKAN+",
     "adakan": "AdaKAN",
+    "mednext": "MedNeXt",
+    "nnunet_resenc": "nnU-Net ResEnc",
     "ukad_s": "UKAD-S",
     "ukad_b": "UKAD-B",
     "ukad_l": "UKAD-L",
@@ -72,9 +62,6 @@ def parse_args() -> argparse.Namespace:
 
 
 def config_path(model_name: str, size: int) -> Path:
-    # The architecture configurations are resolution agnostic except where a
-    # baseline explicitly encodes a spatial size.  BUSI and ISIC provide the
-    # paper's 256 and 512 configurations, respectively.
     dataset = "busi" if size == 256 else "isic"
     candidates = (
         ROOT / "configs" / "baselines" / model_name / f"{dataset}.yaml",
@@ -109,8 +96,6 @@ def benchmark(network: torch.nn.Module, size: int, device: torch.device, warmup:
         _ = network(x)
     synchronize(device)
 
-    # Reset after warm-up so the peak is the stable inference allocation.  The
-    # reset counter begins at current allocation, which includes model weights.
     torch.cuda.reset_peak_memory_stats(device)
     elapsed_ms: list[float] = []
     for _ in range(repeats):
@@ -178,7 +163,7 @@ def main(args: argparse.Namespace) -> None:
                 row["params"] = sum(parameter.numel() for parameter in network.parameters())
                 row.update(benchmark(network, size, device, args.warmup, args.repeats))
                 print(f"{row['label']:20} {size:>3}px  {row['latency_median_ms']:8.3f} ms  {row['peak_allocated_mb']:8.1f} MB")
-            except Exception as error:  # Keep the all-model report useful if one baseline fails.
+            except Exception as error:
                 row["error"] = f"{type(error).__name__}: {error}"
                 print(f"{row['label']:20} {size:>3}px  ERROR: {row['error']}", file=sys.stderr)
                 if args.strict:

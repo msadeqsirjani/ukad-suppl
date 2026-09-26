@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 set -u
 here="$(dirname "$0")"
 model="${1:-all}"

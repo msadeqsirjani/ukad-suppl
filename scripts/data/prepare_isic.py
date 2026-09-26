@@ -1,27 +1,3 @@
-"""Download ISIC 2018 Task 1 and emit the three paper-comparison splits.
-
-Official challenge archive (no authentication required):
-    https://isic-challenge-data.s3.amazonaws.com/2018/
-
-ISIC 2018 lesion boundary segmentation is the dataset shared by the UNeXt and
-Rolling-UNet reference implementations. The same unstratified image-level
-``sklearn.model_selection.train_test_split`` used for BUSI, CVC-ClinicDB and
-GlaS is applied here with split seeds 2981, 6142 and 1187.
-
-Output structure:
-    ${DATASETS}/ISIC2018/
-        ISIC_0000000.png
-        ISIC_0000000_mask.png
-        ...
-    ${WORKBENCH}/data_lists/ISIC2018/split_{2981,6142,1187}/
-        train.csv, val.csv, protocol.json
-
-Usage:
-    python scripts/data/prepare_isic.py \\
-        --datasets /path/to/datasets \\
-        --workbench /path/to/workbench
-"""
-
 import argparse
 import json
 import shutil

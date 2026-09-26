@@ -1,34 +1,3 @@
-"""Download CVC-ClinicDB and emit the three U-KAN paper-comparison splits.
-
-Kaggle dataset: balraj98/cvcclinicdb
-Requires: pip install kaggle  +  ~/.kaggle/kaggle.json
-
-Output structure:
-    ${DATASETS}/CVC/
-        Original/
-            1.png, 2.png, ..., 612.png
-        Ground Truth/
-            1.png, 2.png, ..., 612.png
-    ${WORKBENCH}/data_lists/CVC/split_{2981,6142,1187}/
-        train.csv, val.csv, protocol.json
-
-U-FunKAN's legacy baseline rows were sourced from U-KAN. U-KAN applies
-``sklearn.model_selection.train_test_split`` independently with split seeds
-2981, 6142, and 1187. The split is unstratified and frame-level; the held-out
-20 percent is both validation and reported evaluation, with no independent
-test partition.
-
-CSV paths are relative to ${DATASETS}/CVC root.
-Matches config:
-    root: ${DATASETS}/CVC
-    load_params: [{dtype: uint8}, {normalize: 255., dtype: float32}]
-
-Usage:
-    python scripts/data/prepare_cvc.py \\
-        --datasets /path/to/datasets \\
-        --workbench /path/to/workbench
-"""
-
 import argparse
 import json
 import shutil
@@ -68,13 +37,6 @@ def find_subdir(root: Path, candidates):
 
 
 def _is_binary_mask_dir(d: Path, n_check: int = 5) -> bool:
-    """Return True if PNG files in `d` look like binary masks.
-
-    Counting unique values is too brittle — PNG compression and antialiased
-    edges leave 30–50 distinct values even in genuine binary masks. Instead,
-    a mask is recognized by its bimodal histogram: ≥95% of pixels live at
-    either end of the [0, 255] range.
-    """
     import cv2
 
     samples = sorted(d.glob("*.png"))[:n_check]
@@ -169,7 +131,6 @@ def write_split(
 
 
 def build_paper_split(pairs, split_seed: int):
-    """Reproduce U-KAN's unstratified frame-level sklearn split."""
     train, val = train_test_split(
         list(pairs),
         test_size=0.2,

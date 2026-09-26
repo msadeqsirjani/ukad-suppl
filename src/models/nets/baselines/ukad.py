@@ -18,9 +18,6 @@ class GroupRational(nn.Module):
         a = torch.zeros(groups, degree_p + 1)
         a[:, 1] = 1.0
         self.a = nn.Parameter(a)
-        # Zero is a dead initialization with abs(q) in the denominator:
-        # d|q|/dq is zero at q=0, freezing every denominator coefficient.
-        # Small non-zero values keep the map close to identity and trainable.
         self.b = nn.Parameter(torch.empty(groups, degree_q))
         nn.init.normal_(self.b, mean=0.0, std=1e-2)
 
@@ -92,9 +89,6 @@ class Displace(nn.Module):
         self.offset = nn.Conv2d(ch, 3 * groups, kernel_size=3, padding=1)
         nn.init.zeros_(self.offset.weight)
         nn.init.zeros_(self.offset.bias)
-        # Gate channel starts near-fully-open (sigmoid(4.0)~0.98) so the
-        # gate is permissive at init regardless of hard/soft mode; dy/dx
-        # channels stay zero so displacement is still exactly identity.
         with torch.no_grad():
             self.offset.bias.view(groups, 3)[:, 2] = gate_init_bias
         self._last_raw = None
@@ -333,8 +327,6 @@ class HybridKANDecoderBlock(nn.Module):
         self.act = nn.ReLU(inplace=True)
 
     def forward(self, x):
-        # Start close to the boundary-preserving convolutional decoder while
-        # allowing each output channel to recruit the KAN branch as needed.
         return self.act(self.local(x) + torch.sigmoid(self.kan_logit) * self.kan(x))
 
 
@@ -399,8 +391,6 @@ class AdaptiveScaleContext(nn.Module):
             nn.Conv2d(ch, ch, kernel_size=1, bias=False),
             nn.BatchNorm2d(ch),
         )
-        # Preserve the trained HKD-DS path at initialization. The scale learns
-        # first, then gradients recruit the scale-specific branches.
         self.scale = nn.Parameter(torch.zeros(ch, 1, 1))
 
     def forward(self, x):
@@ -413,13 +403,6 @@ class AdaptiveScaleContext(nn.Module):
 
 
 class PooledGlobalContextMixer(nn.Module):
-    """Lightweight bottleneck attention with spatially pooled keys and values.
-
-    The per-channel residual scale starts at zero, so enabling this module does
-    not perturb the original UKAD path at initialization. The attention branch
-    is nevertheless trainable: the scale receives gradients on the first
-    update, after which gradients flow into the projections as it is recruited.
-    """
 
     def __init__(self, ch, attention_dim=64, heads=4, pool_size=8, norm_groups=8):
         super(PooledGlobalContextMixer, self).__init__()
@@ -511,7 +494,6 @@ class UncertaintyBoundaryRefiner(nn.Module):
             nn.ReLU(inplace=True),
             nn.Conv2d(fused_ch, 1, kernel_size=1),
         )
-        # The new head starts as an exact no-op, protecting the strong CVC path.
         nn.init.zeros_(self.correction[-1].weight)
         nn.init.zeros_(self.correction[-1].bias)
 

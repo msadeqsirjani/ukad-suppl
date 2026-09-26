@@ -3,5 +3,4 @@ class_name: RollingUNet
 config:
   in_ch: 3
   out_ch: 1
-  # Official Rolling-Unet-S channels (1.78 M parameters for RGB segmentation).
   filters: [16, 32, 64, 128, 256]

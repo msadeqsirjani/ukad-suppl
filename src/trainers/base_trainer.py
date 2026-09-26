@@ -8,13 +8,8 @@ from lightning.pytorch.loggers.csv_logs import CSVLogger, ExperimentWriter
 
 
 class AppendSafeExperimentWriter(ExperimentWriter):
-    """Preserve and append to an existing metrics file when a run resumes."""
 
     def _check_log_dir_exists(self) -> None:
-        # Lightning's default writer removes metrics.csv whenever an explicit
-        # logger version already exists. Our experiment directory is stable so
-        # resumed checkpoints must retain the validation history written before
-        # an interruption.
         pass
 
     def __init__(self, log_dir: str) -> None:
@@ -25,7 +20,6 @@ class AppendSafeExperimentWriter(ExperimentWriter):
 
 
 class AppendSafeCSVLogger(CSVLogger):
-    """CSV logger whose fixed experiment version supports checkpoint resume."""
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)

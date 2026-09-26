@@ -65,15 +65,6 @@ def load_config(filename):
 
 
 def create_config(identifier, **kwargs):
-    """
-    Configuration file convention:
-    {
-        "class_name": ... ,
-        "config": {
-            ...
-        }
-    }
-    """
 
     if identifier is None:
         return None

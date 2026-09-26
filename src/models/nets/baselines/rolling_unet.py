@@ -1,5 +1,3 @@
-"""Faithful, dependency-free port of official Rolling-Unet-S."""
-
 import math
 
 import torch
@@ -116,7 +114,6 @@ class Lo2Block(nn.Module):
         self.apply(_init_weights)
 
     def forward(self, x, h, w):
-        # This intentionally has no outer residual, matching Rolling-Unet-S.
         return self.drop_path(self.mlp(x, h, w))
 
 

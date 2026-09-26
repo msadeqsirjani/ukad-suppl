@@ -65,6 +65,8 @@ MODEL_COLOR = {
     "umamba": SLATE,
     "adakan": ROSE,
     "cglknet": TAB[9],
+    "mednext": "#393B79",
+    "nnunet_resenc": "#7B4173",
     "ukad": UKAD,
 }
 
@@ -296,20 +298,13 @@ def delta_forest(rows, labels, out_path, xlabel=r"$\Delta$ IoU", figsize=None):
                 zorder=3,
             )
         ax.set_yticks(ys)
-        # Component identity is carried by the top legend, as in Figure 3;
-        # removing the repeated y-axis labels leaves equal-width panels.
         ax.tick_params(axis="y", left=False, labelleft=False)
         ax.set_title(labels[j], pad=3)
-        # Use the same framed, light-grid panels as Figure 3.  Each panel
-        # carries the short x-axis label, exactly as Figure 3 does.
         ax.xaxis.grid(True, color=GRID, linewidth=0.5, zorder=0)
         ax.set_axisbelow(True)
         box(ax)
         ax.set_xlabel(r"$\Delta$ IoU (\%)")
     axes[0].invert_yaxis()
-    # Use the same compact, bordered top legend as the main-paper Pareto
-    # figure.  The colors identify components; the caption defines the mean,
-    # split-standard-deviation bars, and zero-effect reference line.
     handles = [plt.Line2D([0], [0], marker="o", linestyle="", color=row["color"], markersize=4.8, label=row["name"]) for row in others]
     place_legend(fig, handles, ncol=3)
     _save(fig, out_path, rect=(0.0, 0.0, 1.0, 0.79), w_pad=0.9)

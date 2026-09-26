@@ -1,6 +1,6 @@
 # Supplementary Code — UKAD: Deformable Kolmogorov-Arnold Networks for Medical Image Segmentation
 
-This package reproduces every experiment reported in the paper: UKAD (S/B/L), all twelve retrained
+This package reproduces every experiment reported in the paper: UKAD (S/B/L), all fourteen retrained
 baselines, and the ablation arms in Appendix D. It excludes raw datasets, trained checkpoints, and
 logs — only the code and configuration needed to rerun the pipeline from scratch.
 
@@ -55,7 +55,26 @@ bash scripts/eval/eval_busi.sh ukad_b
 
 This reloads the best-validation-IoU checkpoint, runs the held-out validation split, and reports
 MedPy's IoU, Dice, HD, HD95, recall, precision, and specificity — the same pipeline that produced
-every number in the paper's tables (see Appendix A.2 for exact metric definitions).
+every number in the paper's tables (see Appendix A.2 for exact metric definitions). No MedPy call
+failed in any reported run, and the metric code has no fallback value.
+
+Per-image HD95 (Table 2) and the empty-mask counts come from `per_image_iou.py`, which scores each
+image separately. An image with exactly one empty mask scores the image diagonal, and an image with
+two empty masks scores 0.
+
+```bash
+python scripts/eval/per_image_iou.py --models variants/ukad_l variants/ukad_b adakan
+```
+
+## Held-out ISIC 2018 test set
+
+Every ISIC 2018 checkpoint trains and selects on the official training set only. The official test
+set of 1000 images is prepared once and then evaluated with the same checkpoints.
+
+```bash
+python scripts/data/prepare_isic_test.py --datasets $DATASETS --workbench $WORKBENCH
+python scripts/eval/test_isic.py --models variants/ukad_b variants/ukad_l adakan
+```
 
 ## Significance tests (Appendix C)
 
@@ -65,7 +84,8 @@ python scripts/eval/per_image_iou.py --models variants/ukad_l variants/ukad_b ad
 python scripts/eval/paired_bootstrap.py
 ```
 
-`paired_runs.py` runs a paired Wilcoxon test over the 12 dataset-split pairs with Holm correction.
+`paired_runs.py` runs a paired Wilcoxon test over the 12 dataset-split pairs with Holm correction over the
+fourteen baselines.
 `per_image_iou.py` reloads the stored checkpoints and writes per-image IoU on each validation split.
 `paired_bootstrap.py` pairs those values by image and reports a bootstrap interval and p-value,
 resampling within each dataset-split stratum.
@@ -88,7 +108,7 @@ into one CSV.
 - `src/models/nets/` — every baseline architecture, registered in `src/models/nets/__init__.py`.
 - `src/models/base_model.py`, `src/models/_seg_metrics.py` — the Lightning task wrapper and metrics.
 - `configs/variants/` — UKAD-S/B/L configs, one per dataset.
-- `configs/baselines/` — one config directory per baseline model, including nnU-Net ResEnc-M, MedNeXt, LKM-UNet, and CMUNeXt configs for additional comparisons.
+- `configs/baselines/` — one config directory per baseline model, including nnU-Net ResEnc-M and MedNeXt. The LKM-UNet and CMUNeXt configs are extra comparisons that the paper does not report.
 - `configs/ablation/` — the fourteen ablation arms of Appendix D.
 - `scripts/train/`, `scripts/eval/`, `scripts/variants/` — driver scripts.
 - `train.py` — the single entry point every experiment in the paper runs through.

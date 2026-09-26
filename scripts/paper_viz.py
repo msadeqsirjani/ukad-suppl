@@ -154,7 +154,6 @@ def predict(model, image, device):
 
 
 def predict_batch(model, images, device):
-    """Return binary masks for equally sized images in one forward pass."""
     with torch.inference_mode():
         batch = torch.stack(list(images)).to(device)
         out = model(batch)
@@ -277,7 +276,6 @@ def best_indices(dataset_name, dataset, seed, device, count=1, candidate_limit=2
 
 
 def representative_indices(dataset_name, dataset, seed, device, count=1):
-    """Choose pre-specified morphology cases without reading model predictions."""
     primary = pick_index(dataset_name, dataset)
     indices = [primary]
     while len(indices) < count:

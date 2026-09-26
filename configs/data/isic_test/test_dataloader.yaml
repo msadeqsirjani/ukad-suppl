@@ -1,0 +1,11 @@
+module: src.data
+class_name: isic
+config:
+  dataset: !include "./datasets/test.yaml"
+  split: val
+  batch_size: 8
+  shuffle: false
+  pin_memory: true
+  num_workers: 12
+  persistent_workers: true
+  prefetch_factor: 4

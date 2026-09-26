@@ -36,8 +36,6 @@ def draw_row(axes, image, gt, dx, dy, r_max):
     ys = np.linspace(0, H - 1, h)
     xs = np.linspace(0, W - 1, w)
     grid_x, grid_y = np.meshgrid(xs, ys)
-    # Show direction only. Magnitude is encoded by the middle panel, so a
-    # sparse, high-contrast field is easier to read than coloured dense arrows.
     step = 2 if h <= 32 else 3
     axes[2].imshow(contour)
     axes[2].quiver(

@@ -1,32 +1,3 @@
-"""Download BUSI and emit the three U-KAN paper-comparison splits.
-
-Kaggle dataset: aryashah2k/breast-ultrasound-images-dataset
-Requires: pip install kaggle  +  ~/.kaggle/kaggle.json
-
-Output structure:
-    ${DATASETS}/BUSI/
-        benign (1).png
-        benign (1)_mask.png
-        ...
-    ${WORKBENCH}/data_lists/BUSI/split_{2981,6142,1187}/
-        train.csv, val.csv, protocol.json
-
-U-FunKAN's legacy baseline rows were sourced from U-KAN. U-KAN applies
-``sklearn.model_selection.train_test_split`` independently with split seeds
-2981, 6142, and 1187. The split is unstratified and image-level; the held-out
-20 percent is both validation and reported evaluation, with no independent
-test partition.
-
-Matches config:
-    root: ${DATASETS}/BUSI
-    load_params: [{dtype: uint8}, {normalize: 255., dtype: float32}]
-
-Usage:
-    python scripts/data/prepare_busi.py \\
-        --datasets /path/to/datasets \\
-        --workbench /path/to/workbench
-"""
-
 import argparse
 import json
 import shutil
@@ -108,7 +79,6 @@ def write_split(lists_dir: Path, split_seed: int, splits: dict, metadata: dict):
 
 
 def build_paper_split(pairs, split_seed: int):
-    """Reproduce U-KAN's unstratified image-level sklearn split."""
     train, val = train_test_split(
         list(pairs),
         test_size=0.2,
